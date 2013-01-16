@@ -1,0 +1,68 @@
+<apex:page sidebar="false" showHeader="false" standardController="Account">
+<style>
+li {
+    list-style: none;
+    height: auto;
+    min-height: 60px;
+    padding: 5px 40px 5px 65px !important;
+    width: 240px;
+    background-position: 5px 5px;
+    background-repeat: no-repeat;
+    background-size: 45px 45px;
+}
+ul li:nth-child(odd){
+    background-color: #EEE;
+}
+ul li:nth-child(even){
+    background-color: #FDFDFD;
+}
+#twitterFeedDiv{
+    height: 300px;
+    overflow-y: scroll;
+}
+.usernameLabel{
+    font-weight: bold;
+}
+.timeHolder{
+    font-size: 9px;
+}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script>
+    j$ = jQuery.noConflict();
+        
+    function twitterSearch(obj) {
+        var twitterDiv = j$("#twitterFeedDiv");
+        var strInnerHtml = "<ul>";
+
+        for (i = 0; i < obj.results.length; i++) {
+            var user = obj.results[i].from_user;
+            strInnerHtml += "<li style='background-image: url(" + obj.results[i].profile_image_url + "); '>";
+            strInnerHtml += "<span class='usernameLabel'><a href='http://twitter.com/" + user + "'>" + user + "</a></span>: "
+            strInnerHtml += obj.results[i].text + " <span class='timeHolder'>(" + obj.results[i].created_at + " GMT)</span> </li>";
+        }
+        
+        strInnerHtml += "</ul>";
+        twitterDiv.html(strInnerHtml);
+
+    }
+
+
+    function twitter(keyword) {
+        var twitterJSON = document.createElement("script");
+        twitterJSON.type = "text/javascript";
+        twitterJSON.src="https://search.twitter.com/search.json?callback=twitterSearch&q="+keyword;
+        document.getElementsByTagName("head")[0].appendChild(twitterJSON);
+        return false;
+    }
+
+
+    j$(document).ready( function(){
+        twitter("{!Account.Twitter_Search_Keyword__c}");
+    });
+</script>
+
+<div id="twitterFeedDiv">
+</div>
+
+</apex:page>
